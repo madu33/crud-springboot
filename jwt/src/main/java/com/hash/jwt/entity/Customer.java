@@ -19,7 +19,7 @@ public class Customer {
     private String lastName;
     private String address;
     private String email;
-    private Integer number;
+    private Integer mobile;
     private String userName;
     private String password;
 

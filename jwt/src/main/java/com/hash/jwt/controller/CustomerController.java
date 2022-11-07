@@ -37,7 +37,8 @@ public class CustomerController {
         return customerService.searchCustomerByName(customerName);
     }
     @GetMapping("/deleteCustomer/{customerId}")
-    public ResponseEntity<Boolean>deleteCustomerById(@PathVariable Integer customerId){
-        return customerService.deleteCustomerById(customerId);
+    public ResponseEntity<Boolean>deleteCustomerById(@PathVariable String customerId){
+        return customerService.deleteCustomerById(Integer.parseInt(customerId));
     }
+
 }

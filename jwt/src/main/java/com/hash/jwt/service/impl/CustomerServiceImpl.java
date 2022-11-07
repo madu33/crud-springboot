@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -25,15 +26,24 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public ResponseEntity<CustomerDto>addCustomer(CustomerDto customerDto) {
         try{
             Customer customer=modelMapper.map(customerDto, Customer.class);
-            Customer cus = customerRepo.save(customer);
-            return new ResponseEntity<CustomerDto>(modelMapper.map(cus,CustomerDto.class), HttpStatus.OK);
+            customer.setPassword(passwordEncoder.encode(customerDto.getPassword()));
+            Customer cus = customerRepo.save(null);
+
+            cus.setPassword(null);
+            if(cus.getCustomerId() !=null)
+                return new ResponseEntity<CustomerDto>(modelMapper.map(cus,CustomerDto.class), HttpStatus.OK);
+
         }catch (Exception e){
             throw new RuntimeException("Can't Save Customer Here Please Check Your Data");
         }
+        throw new RuntimeException("Can't Save Customer Here Please Check Your Data");
     }
 
     @Override
@@ -76,6 +86,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseEntity<Boolean> deleteCustomerById(Integer customerId) {
             try {
+                log.info("this is working");
                 customerRepo.deleteById(customerId);
                 return new ResponseEntity<Boolean>(true,HttpStatus.OK);
             }catch (Exception e){
